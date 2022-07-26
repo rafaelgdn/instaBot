@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Example200Response",
+  "type": "object",
+  "required": ["message", "infos"],
+  "properties": {
+    "message": {
+      "type": "string",
+      "enum": ["Successfully fetched!"]
+    },
+    "infos": {
+      "type": "object",
+      "properties": {
+        "number": {
+          "type": "number"
+        },
+        "string": {
+          "type": "string"
+        },
+        "array": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "object": {
+          "type": "object"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ExampleRequest",
+  "type": "object",
+  "required": [
+    "number",
+    "string"
+  ],
+  "properties": {
+    "number": {
+      "type": "number"
+    },
+    "string": {
+      "type": "string"
+    },
+    "array": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "object": {
+      "type": "object"
+    }
+  }
+}

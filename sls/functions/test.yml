@@ -1,0 +1,2 @@
+Test:
+  handler: src/functions/test.main

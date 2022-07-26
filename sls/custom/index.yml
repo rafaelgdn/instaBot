@@ -1,0 +1,12 @@
+stage: ${opt:stage, 'dev'}
+shortServiceName: default # the name of the service here!
+bundle: ${file(sls/custom/bundle.yml)}
+serverless-iam-roles-per-function:
+  defaultInherit: true
+prune:
+  automatic: true
+  number: 20
+memorySize:
+  dev: 128
+  staging: 128
+  production: 256

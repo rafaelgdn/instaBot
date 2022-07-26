@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "Models": ["./src/models"],
+      "Utils/*": ["./src/utils/*"],
+      "Schemas/*": ["./src/schemas/*"],
+      "Helpers/*": ["./src/helpers/*"],
+      "Functions/*": ["./src/functions/*"]
+    }
+  },
+  "include": ["src/**/*", "tests/**/*"],
+  "exclude": ["node_modules", "dist"]
+}

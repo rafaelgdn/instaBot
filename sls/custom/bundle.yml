@@ -1,0 +1,7 @@
+linting: true # Enable linting as a part of the build process
+aliases: # Create an alias to 'import' modules easily with a custom path
+  - Models: src/models
+  - Utils: src/utils
+  - Helpers: src/helpers
+  - Functions: src/functions
+  - Schemas: src/schemas

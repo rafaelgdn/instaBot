@@ -1,0 +1,26 @@
+service: instaBOT
+
+plugins:
+  - serverless-bundle
+  - serverless-prune-plugin
+  - serverless-iam-roles-per-function
+
+custom: ${file(sls/custom/index.yml)}
+
+package:
+  patterns:
+    - '!node_modules/**'
+
+provider:
+  architecture: arm64
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-1
+  memorySize: ${self:custom.memorySize.${self:custom.stage}}
+  versionFunctions: false
+  #environment: ${file(sls/provider/environment.yml)}
+
+functions: 
+  - ${file(sls/functions/test.yml)}
+
+#resources: ${file(sls/resources/index.yml)}

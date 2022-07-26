@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.serverless/
+.webpack/
+.eslintcache
+coverage/
+documentation.json
+documentation_external.json
