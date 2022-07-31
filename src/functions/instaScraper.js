@@ -11,8 +11,10 @@ import { IgApiClient } from 'instagram-private-api';
 
 // const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const { INSTA_USER, INSTA_PASS, EMAIL, EMAIL_APP_PASS, EMAIL_IMAP } = process.env;
+
 const ig = new IgApiClient();
-ig.state.generateDevice('espacosinvisiveisblog@gmail.com');
+ig.state.generateDevice(INSTA_USER);
 
 const getCodeOnEmail = async () => {
   await ig.challenge.selectVerifyMethod('1');
@@ -20,9 +22,9 @@ const getCodeOnEmail = async () => {
 
   const emailConfig = {
     imap: {
-      user: 'espacosinvisiveisblog@gmail.com',
-      password: 'ghfduewsybkduixi',
-      host: 'imap.gmail.com',
+      user: EMAIL,
+      password: EMAIL_APP_PASS,
+      host: EMAIL_IMAP,
       port: '993',
       tls: true,
       authTimeout: 30000,
@@ -86,8 +88,6 @@ const getCodeOnEmail = async () => {
 // const cookieStore = new FileCookieStore('./cookies.json');
 
 export const main = async () => {
-  const { INSTA_USER, INSTA_PASS } = process.env;
-
   try {
     console.log('Initializing Scraper...');
     await ig.simulate.preLoginFlow();
