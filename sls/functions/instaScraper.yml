@@ -1,0 +1,2 @@
+InstaScraper:
+  handler: src/functions/instaScraper.main

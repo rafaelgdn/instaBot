@@ -17,46 +17,26 @@
   },
   "dependencies": {
     "aws-sdk": "^2.1061.0",
-    "bgc-mtls-integration-plugin": "^1.4.0",
-    "uuid": "^8.3.2"
+    "imap-simple": "^5.1.0",
+    "inquirer": "^8.2.4",
+    "instagram-private-api": "^1.45.3",
+    "lodash": "^4.17.21",
+    "mailparser": "^3.5.0",
+    "re2": "^1.17.2",
+    "tough-cookie-filestore2": "^1.0.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.5",
-    "@commitlint/cli": "^16.1.0",
-    "@commitlint/config-conventional": "^16.0.0",
-    "@digitalroute/cz-conventional-changelog-for-jira": "^7.0.0",
-    "@kakkuk/serverless-aws-apigateway-documentation": "^1.1.8",
-    "@types/jest": "^26.0.24",
-    "commitizen": "^4.2.4",
     "eslint": "^8.7.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-prettier": "^4.0.0",
-    "husky": "7.0.4",
-    "jsdoc": "^3.6.7",
     "lint-staged": "^12.3.1",
     "prettier": "^2.5.1",
     "prettier-eslint": "^8.2.2",
     "serverless-bundle": "5.2.0",
     "serverless-iam-roles-per-function": "^3.2.0",
     "serverless-prune-plugin": "^2.0.1"
-  },
-  "jest": {
-    "setupFilesAfterEnv": [
-      "<rootDir>/jest-env.js"
-    ],
-    "collectCoverageFrom": [
-      "<rootDir>/src/functions/**/*.js",
-      "<rootDir>/src/utils/**/*.js",
-      "<rootDir>/src/helpers/**/*.js"
-    ],
-    "moduleNameMapper": {
-      "^Utils(.*)$": "<rootDir>/src/utils/$1",
-      "^Models(.*)$": "<rootDir>/src/models/$1",
-      "^Schemas(.*)$": "<rootDir>/src/schemas/$1",
-      "^Helpers(.*)$": "<rootDir>/src/helpers/$1",
-      "^Functions(.*)$": "<rootDir>/src/functions/$1"
-    }
   }
 }

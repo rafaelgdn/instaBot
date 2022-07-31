@@ -21,6 +21,6 @@ provider:
   #environment: ${file(sls/provider/environment.yml)}
 
 functions: 
-  - ${file(sls/functions/test.yml)}
+  - ${file(sls/functions/instaScraper.yml)}
 
 #resources: ${file(sls/resources/index.yml)}
