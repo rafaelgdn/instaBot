@@ -6,3 +6,4 @@ dist/
 coverage/
 documentation.json
 documentation_external.json
+.env

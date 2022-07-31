@@ -8,7 +8,6 @@ import _ from 'lodash';
 import { simpleParser } from 'mailparser';
 // import FileCookieStore from 'tough-cookie-filestore2'
 import { IgApiClient } from 'instagram-private-api';
-// import inquirer from 'inquirer';
 
 // const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -18,13 +17,6 @@ ig.state.generateDevice('espacosinvisiveisblog@gmail.com');
 const getCodeOnEmail = async () => {
   await ig.challenge.selectVerifyMethod('1');
   console.log(ig.state.checkpoint); // Challenge info here
-  // const { code } = await inquirer.prompt([
-  //   {
-  //     type: 'input',
-  //     name: 'code',
-  //     message: 'Enter code',
-  //   }
-  // ]);
 
   const emailConfig = {
     imap: {
@@ -94,10 +86,12 @@ const getCodeOnEmail = async () => {
 // const cookieStore = new FileCookieStore('./cookies.json');
 
 export const main = async () => {
+  const { INSTA_USER, INSTA_PASS } = process.env;
+
   try {
     console.log('Initializing Scraper...');
     await ig.simulate.preLoginFlow();
-    await ig.account.login('espacosinvisiveisblog@gmail.com', 'Rafa2404#espacosinvisiveis');
+    await ig.account.login(INSTA_USER, INSTA_PASS);
     process.nextTick(async () => ig.simulate.postLoginFlow());
 
     console.log('Finding User id...');
@@ -106,6 +100,7 @@ export const main = async () => {
     console.log('Getting User feed', { userId });
     const userFeed = ig.feed.user(userId);
 
+    console.log('Scrapping Pages...');
     const pages = [];
 
     for (let i = 0; i < 2; i++) {
@@ -118,6 +113,7 @@ export const main = async () => {
     }
 
     const feedPages = pages.flat();
+    console.log('Items length', { length: feedPages.length });
 
     // const pageOne = await userFeed.items();
     // const pageTwo = await userFeed.items();

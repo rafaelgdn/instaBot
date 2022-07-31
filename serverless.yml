@@ -4,6 +4,7 @@ plugins:
   - serverless-bundle
   - serverless-prune-plugin
   - serverless-iam-roles-per-function
+  - serverless-dotenv-plugin
 
 custom: ${file(sls/custom/index.yml)}
 
@@ -18,9 +19,9 @@ provider:
   region: us-east-1
   memorySize: ${self:custom.memorySize.${self:custom.stage}}
   versionFunctions: false
-  #environment: ${file(sls/provider/environment.yml)}
+  environment:
+    a: '2'
 
-functions: 
+functions:
   - ${file(sls/functions/instaScraper.yml)}
-
 #resources: ${file(sls/resources/index.yml)}
