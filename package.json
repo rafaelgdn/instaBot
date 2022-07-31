@@ -17,12 +17,16 @@
   },
   "dependencies": {
     "aws-sdk": "^2.1061.0",
+    "bluebird": "^3.7.2",
+    "colors": "^1.4.0",
     "imap-simple": "^5.1.0",
     "inquirer": "^8.2.4",
     "instagram-private-api": "^1.45.3",
     "lodash": "^4.17.21",
+    "lowdb": "^1.0.0",
     "mailparser": "^3.5.0",
     "re2": "^1.17.2",
+    "shortid": "^2.2.16",
     "tough-cookie-filestore2": "^1.0.0"
   },
   "devDependencies": {
