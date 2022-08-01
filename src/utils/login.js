@@ -204,8 +204,7 @@ async function login(inputLogin = null, inputPassword = null, inputProxy = null)
   const result = await Bluebird.try(async () => {
     if (!hasCookies) {
       console.log("User not logged in, login in");
-      const loggedInUser = await ig.account.login(process.env.IG_USERNAME, process.env.IG_PASSWORD);
-      console.log(loggedInUser);
+      await ig.account.login(process.env.IG_USERNAME, process.env.IG_PASSWORD);
     }
     // Time to try if we can interact
     // If interaction works, we send the IG session to the result 
