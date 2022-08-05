@@ -16,21 +16,27 @@
     "test:coverage": "serverless-bundle test --coverage --noStackTrace --runInBand --passWithNoTests"
   },
   "dependencies": {
-    "aws-sdk": "^2.1061.0",
+    "aws-sdk": "^2.1189.0",
+    "axios": "^0.27.2",
     "bluebird": "^3.7.2",
     "colors": "^1.4.0",
+    "file-type": "^17.1.6",
+    "filetype": "^0.1.0",
     "imap-simple": "^5.1.0",
     "inquirer": "^8.2.4",
     "instagram-private-api": "^1.45.3",
     "lodash": "^4.17.21",
     "lowdb": "^1.0.0",
     "mailparser": "^3.5.0",
+    "mime": "^3.0.0",
     "re2": "^1.17.2",
     "shortid": "^2.2.16",
     "tough-cookie-filestore2": "^1.0.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.5",
+    "@babel/plugin-transform-runtime": "^7.18.10",
+    "@babel/preset-env": "^7.18.10",
     "eslint": "^8.7.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.3.0",
@@ -42,6 +48,8 @@
     "serverless-bundle": "5.2.0",
     "serverless-dotenv-plugin": "^4.0.1",
     "serverless-iam-roles-per-function": "^3.2.0",
-    "serverless-prune-plugin": "^2.0.1"
+    "serverless-prune-plugin": "^2.0.1",
+    "serverless-webpack": "^5.8.0",
+    "webpack-node-externals": "^3.0.0"
   }
 }

@@ -2,6 +2,7 @@ service: instaBOT
 
 plugins:
   - serverless-bundle
+  - serverless-webpack
   - serverless-prune-plugin
   - serverless-iam-roles-per-function
   - serverless-dotenv-plugin
