@@ -1,0 +1,2 @@
+CronFreefireMemes:
+  handler: src/functions/cronFreefireMemes.main

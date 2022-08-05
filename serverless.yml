@@ -25,4 +25,5 @@ provider:
 
 functions:
   - ${file(sls/functions/instaScraper.yml)}
+  - ${file(sls/functions/cronFreefireMemes.yml)}
 #resources: ${file(sls/resources/index.yml)}
