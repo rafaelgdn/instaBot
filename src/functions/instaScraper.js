@@ -4,14 +4,15 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-promise-executor-return */
 /* eslint-disable no-console */
-import axios from "axios";
-import { S3 } from 'aws-sdk'
+import axios from 'axios';
+import { S3 } from 'aws-sdk';
 import mime from 'mime';
-import { IgApiClient } from 'instagram-private-api'
+import { IgApiClient } from 'instagram-private-api';
+import { getCodeOnEmail } from '../utils/login';
 // import Login from '../utils/login';
 
 const { INSTA_USER, INSTA_PASS } = process.env;
-const bucket = "insta-scraper-posts";
+const bucket = 'insta-scraper-posts';
 const s3 = new S3();
 const ig = new IgApiClient();
 
@@ -22,8 +23,6 @@ function getRandomIntInclusive(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
-ig.state.generateDevice(INSTA_USER);
 
 // const memesGeralUsers = [
 //   'smsindelicado',
@@ -42,19 +41,34 @@ const memesFreefireUsers = [
   'freefire.memes.brasiil',
   'freefire.memes_zuera',
   'freefire.memesbr2',
-  'freefirememess.br'
-]
+  'freefirememess.br',
+];
+
+const login = async () => {
+  try {
+    ig.state.generateDevice(INSTA_USER);
+    await ig.account.login(INSTA_USER, INSTA_PASS);
+  } catch (error) {
+    if (JSON.stringify(error).toLowerCase().includes('challenge_required')) {
+      await getCodeOnEmail({ ig });
+      return;
+    }
+
+    throw error;
+  }
+};
 
 export const main = async () => {
   try {
     // const ig = await Login(INSTA_USER, INSTA_PASS);
-    await ig.account.login(INSTA_USER, INSTA_PASS);
+
+    await login();
 
     console.log('Finding User id...');
     const users = [];
     for (const username of memesFreefireUsers) {
       try {
-        const user = await ig.user.getIdByUsername(username)
+        const user = await ig.user.getIdByUsername(username);
         users.push(user);
         await sleep(getRandomIntInclusive(1000, 5000));
       } catch (error) {
@@ -101,30 +115,49 @@ export const main = async () => {
 
       if (!media) continue;
 
-      const resp = await axios.get(media, { responseType: "stream" });
+      if (imgUrl && videoUrl) {
+        const imgResp = await axios.get(imgUrl, { responseType: 'stream' });
+        const contentType = imgResp.headers['content-type'];
+        const imgExt = mime.getExtension(contentType);
+
+        await s3
+          .upload({
+            Bucket: bucket,
+            ACL: 'private',
+            Key: `memes/freefire/${mediaId}/${mediaId}-cover.${imgExt}`,
+            Body: imgResp.data,
+          })
+          .promise();
+      }
+
+      const resp = await axios.get(media, { responseType: 'stream' });
       const contentType = resp.headers['content-type'];
       const ext = mime.getExtension(contentType);
 
-      await s3.upload({
-        Bucket: bucket,
-        ACL: 'private',
-        Key: `memes/freefire/${mediaId}/${mediaId}.${ext}`,
-        Body: resp.data,
-      }).promise();
+      await s3
+        .upload({
+          Bucket: bucket,
+          ACL: 'private',
+          Key: `memes/freefire/${mediaId}/${mediaId}.${ext}`,
+          Body: resp.data,
+        })
+        .promise();
 
-      await s3.upload({
-        Bucket: bucket,
-        ACL: 'private',
-        Key: `memes/freefire/${mediaId}/text.txt`,
-        Body: text,
-      }).promise();
+      await s3
+        .upload({
+          Bucket: bucket,
+          ACL: 'private',
+          Key: `memes/freefire/${mediaId}/text.txt`,
+          Body: text,
+        })
+        .promise();
 
       await sleep(getRandomIntInclusive(3000, 10000));
     }
 
-    return 'Successfully scraped!'
+    return 'Successfully scraped!';
   } catch (error) {
     console.log('First error', { error });
     throw error;
-  };
+  }
 };

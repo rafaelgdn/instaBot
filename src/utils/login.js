@@ -4,14 +4,19 @@
 /* eslint-disable no-promise-executor-return */
 import fs from 'fs';
 import Bluebird from 'bluebird';
-import { IgApiClient, IgCheckpointError, IgLoginRequiredError, IgLoginBadPasswordError } from 'instagram-private-api';
+import {
+  IgApiClient,
+  IgCheckpointError,
+  IgLoginRequiredError,
+  IgLoginBadPasswordError,
+} from 'instagram-private-api';
 import _ from 'lodash';
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
 import shortid from 'shortid';
 import imaps from 'imap-simple';
 import { simpleParser } from 'mailparser';
-import path from 'path'
+import path from 'path';
 import 'colors';
 
 const ig = new IgApiClient();
@@ -19,8 +24,8 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const { INSTA_USER, EMAIL, EMAIL_APP_PASS, EMAIL_IMAP } = process.env;
 
-const getCodeOnEmail = async () => {
-  await ig.challenge.selectVerifyMethod('1');
+export const getCodeOnEmail = async ({ ig: i }) => {
+  await i.challenge.selectVerifyMethod('1');
   // console.log(ig.state.checkpoint); // Challenge info here
 
   const emailConfig = {
@@ -75,7 +80,7 @@ const getCodeOnEmail = async () => {
                   `Answered Instagram security challenge with answer code: ${answerCode}`
                 );
 
-                await ig.challenge.sendSecurityCode(answerCode);
+                await i.challenge.sendSecurityCode(answerCode);
                 await sleep(1000);
               }
             }
@@ -86,11 +91,14 @@ const getCodeOnEmail = async () => {
   );
 };
 
-
 function saveCookies(cookies, state) {
   // console.log(cookies);
   // console.log(state);
-  const cookiepath = path.resolve(__dirname, 'cookies', `${(process.env.IG_USERNAME).toLowerCase()}.json`);
+  const cookiepath = path.resolve(
+    __dirname,
+    'cookies',
+    `${process.env.IG_USERNAME.toLowerCase()}.json`
+  );
   if (!fs.existsSync(path.resolve(__dirname, 'cookies'))) {
     fs.mkdirSync(path.resolve(__dirname, 'cookies'));
   }
@@ -112,8 +120,11 @@ function saveCookies(cookies, state) {
   };
 }
 async function loadCookies() {
-
-  const cookiepath = path.resolve(__dirname, 'cookies', `${(process.env.IG_USERNAME).toLowerCase()}.json`);
+  const cookiepath = path.resolve(
+    __dirname,
+    'cookies',
+    `${process.env.IG_USERNAME.toLowerCase()}.json`
+  );
   // console.log("Trying to load filepath " + cookiepath);
   // console.log(__dirname);
   if (fs.existsSync(cookiepath)) {
@@ -129,13 +140,12 @@ async function loadCookies() {
     ig.state.phoneId = cookies.state.phoneId;
     ig.state.adid = cookies.state.adid;
     ig.state.build = cookies.state.build;
-    console.log("Cookies loaded".cyan);
+    console.log('Cookies loaded'.cyan);
     return true;
   }
-  console.log("No cookie file found in loadCookies function");
+  console.log('No cookie file found in loadCookies function');
   return false;
 }
-
 
 // Generate Basic directories
 if (!fs.existsSync(path.resolve(__dirname, 'output'))) {
@@ -153,27 +163,24 @@ ig.simulate.preLoginFlow();
 // Optionally you can setup proxy url
 
 // if Input proxy == false then we force to not use the proxy
-async function login(inputLogin = null, inputPassword = null, inputProxy = null) {
+export async function login(inputLogin = null, inputPassword = null, inputProxy = null) {
   if (inputLogin != null && inputPassword != null) {
     process.env.IG_USERNAME = inputLogin;
     process.env.IG_PASSWORD = inputPassword;
-    if (inputProxy != null && inputProxy != false)
-      process.env.IG_PROXY = inputProxy;
-
+    if (inputProxy != null && inputProxy != false) process.env.IG_PROXY = inputProxy;
   }
 
   if (process.env.IG_PROXY && inputProxy != false) {
-    console.log("Using proxy".green);
+    console.log('Using proxy'.green);
   } else {
-    console.log("Not using proxy".gray);
-    console.log("Mobile/Residential proxy recommended".gray);
+    console.log('Not using proxy'.gray);
+    console.log('Mobile/Residential proxy recommended'.gray);
   }
 
   ig.state.proxyUrl = process.env.IG_PROXY;
-  console.log("Trying to log with ".cyan + process.env.IG_USERNAME.green);
+  console.log('Trying to log with '.cyan + process.env.IG_USERNAME.green);
   // First we check if the user have cookies
   const hasCookies = await loadCookies();
-
 
   // Execute all requests prior to authorization in the real Android application
   // This function executes after every request
@@ -203,52 +210,51 @@ async function login(inputLogin = null, inputPassword = null, inputProxy = null)
   await ig.simulate.preLoginFlow();
   const result = await Bluebird.try(async () => {
     if (!hasCookies) {
-      console.log("User not logged in, login in");
+      console.log('User not logged in, login in');
       await ig.account.login(process.env.IG_USERNAME, process.env.IG_PASSWORD);
     }
     // Time to try if we can interact
-    // If interaction works, we send the IG session to the result 
+    // If interaction works, we send the IG session to the result
     // Inject user information on the interaction intent
 
     try {
       ig.loggedInUser = await ig.account.currentUser();
-      console.log("Logged in".green);
+      console.log('Logged in'.green);
     } catch (e) {
       console.log(e);
-      console.log("Login failed from cookie | Remove incorrect cookie".red);
-      return "removeCookie";
-    };
-
+      console.log('Login failed from cookie | Remove incorrect cookie'.red);
+      return 'removeCookie';
+    }
 
     // Open DB
-    const adapter = new FileSync(path.resolve(__dirname, 'db', `${(process.env.IG_USERNAME).toLowerCase()}.json`));
+    const adapter = new FileSync(
+      path.resolve(__dirname, 'db', `${process.env.IG_USERNAME.toLowerCase()}.json`)
+    );
     const db = low(adapter);
-    db.defaults({ likes: [], follows: [] }).write()
+    db.defaults({ likes: [], follows: [] }).write();
     ig.shortid = shortid;
     ig.db = db;
 
     return ig;
-  }).catch(IgCheckpointError, async () => {
-    console.log('Solving challenge...');
-    await getCodeOnEmail();
-    return ig;
-
-  }).catch(IgLoginRequiredError, () => {
-    if (hasCookies) {
-      console.log("Invalid cookies");
-    } else {
-      // This block is not supossed to be used never (IgLoginBadPasswordError) exists
-      console.log("Incorrect password");
-      return "incorrectPassword";
-    }
-  }).catch(IgLoginBadPasswordError, () => {
-    console.log("Incorrect password");
-    return "incorrectPassword";
-  });
+  })
+    .catch(IgCheckpointError, async () => {
+      console.log('Solving challenge...');
+      await getCodeOnEmail();
+      return ig;
+    })
+    .catch(IgLoginRequiredError, () => {
+      if (hasCookies) {
+        console.log('Invalid cookies');
+      } else {
+        // This block is not supossed to be used never (IgLoginBadPasswordError) exists
+        console.log('Incorrect password');
+        return 'incorrectPassword';
+      }
+    })
+    .catch(IgLoginBadPasswordError, () => {
+      console.log('Incorrect password');
+      return 'incorrectPassword';
+    });
   // If result is not undefined we send the ig object session
   return result;
 }
-
-
-
-export default login;
